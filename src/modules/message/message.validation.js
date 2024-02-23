@@ -2,7 +2,7 @@ import Joi from "joi";
 
 export const addMessageSchema = Joi.object({
     message: Joi.string().min(3).max(250).required(),
-    receivedId : Joi.string().hex().length(24)
+    userName : Joi.string().alphanum().min(3).max(30).required()
 })
 
 export const deleteMessageSchema = Joi.object({

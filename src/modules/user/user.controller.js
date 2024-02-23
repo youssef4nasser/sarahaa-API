@@ -17,7 +17,6 @@ export const profileImage = asyncHandler(
 
 export const coverImage = asyncHandler(
     async (req, res, next) => {
-        console.log(req.files);
         const images = [];
         for (const file of req.files) {
             images.push(file.finalDest)

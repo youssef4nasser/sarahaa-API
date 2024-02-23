@@ -6,10 +6,9 @@ import jwt from 'jsonwebtoken'
 import { htmlCode } from "../../utils/htmlEmailCode.js";
 import { AppError } from "../../utils/appError.js";
 
-
 export const signUp = asyncHandler(
     async (req, res, next) => {
-        const { firstName, lastName, userName, email, password, gender, age, phone } = req.body;
+        const { firstName, lastName, userName, email, password, gender, phone } = req.body;
         const chekUser = await userModel.findOne({ 
             $or: [
                 {userName},
@@ -22,7 +21,7 @@ export const signUp = asyncHandler(
         }
         const hashPassword = bcrypt.hashSync(password, parseInt(process.env.SALT_ROUED));
         const user = await userModel.create({ 
-            firstName, lastName, userName, email, password: hashPassword, gender, age, phone
+            firstName, lastName, userName, email, password: hashPassword, gender, phone
         });
        
         const token = jwt.sign({id: user._id, email: user.email}, process.env.EMAIL_SIGNATURE, {expiresIn: 60 *  5})
@@ -33,7 +32,7 @@ export const signUp = asyncHandler(
         const html = htmlCode(link, RequestNewEmailLink);
 
         await sendEmail({to:email, subject: "Confirm Email Saraha", html})
-        return res.json({ message: "User created successfully" })
+        return res.json({ message: "User created successfully", user })
     }
 )
 
@@ -42,7 +41,7 @@ export const confirmEmail = asyncHandler(
         const {token} = req.params;
         const decoded = jwt.verify(token, process.env.EMAIL_SIGNATURE)
         const user = await userModel.findByIdAndUpdate(decoded.id, {confirmEmail: true})
-        return user ? res.json({message: "success"}) : next(new AppError("Not register account", 404))
+        return user ? res.redirect("https://sarahah-app-delta.vercel.app/confirmEmail") : next(new AppError("Not register account", 404))
     }
 )
 
@@ -81,7 +80,7 @@ export const logIn = asyncHandler(
         if (!match) {
             return next(new AppError("Password incorrect", 401))
         }
-        let token = jwt.sign({id: user._id, firstName: user.firstName, flastName: user.lastName}, process.env.TOKEN_SIGNATURE)
-        return res.status(200).json({ message: "success", token})
+        let token = jwt.sign({id: user._id, firstName: user.firstName, lastName: user.lastName, userName: user.userName}, process.env.TOKEN_SIGNATURE)
+        return res.status(200).json({ message: "success", token, user})
     }
 )

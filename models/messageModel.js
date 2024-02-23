@@ -5,10 +5,14 @@ const messageSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    receivedId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-    }
+    // userName: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "User",
+    // }
+    userName: {
+        type: String,
+        required: true,
+    },
 },
 {
     timestamps: true,

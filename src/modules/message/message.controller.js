@@ -5,32 +5,32 @@ import { asyncHandler } from "../../utils/errorHanding.js";
 
 export const addMessage = asyncHandler(
     async (req, res, next) => {
-        const { message, receivedId } = req.body;
-        const user = await userModel.findById(receivedId);
+        const {userName} = req.params
+        const { message } = req.body;
+        const user = await userModel.findOne({userName});
         if (!user) {
-            return next(new AppError(`User not found with id of ${id}`, 404));
+            return next(new AppError(`User not found`, 404));
         }
-        await messageModel.create({message, receivedId});
+        await messageModel.create({message, userName});
         return res.status(201).json({message: "success"});
     }
 )
 
 export const getUserMessage = asyncHandler(
     async (req, res, next) => {
-        const messages = await messageModel.find({receivedId: req.user._id});
+        const messages = await messageModel.find({userName: req.user.userName});
         return res.status(201).json({message: "success", messages});
     }
 )
 
 export const deleteUserMessage = asyncHandler(
     async (req, res, next) => {
-        const userId = req.user._id
         const {id} = req.params;
         const message = await messageModel.findById(id)
         if(!message){
             next(new AppError("No Message Found", 400))
         }
-        if(userId.toString() != message.receivedId.toString()){
+        if(req.user.userName !== message.userName){
             next(new AppError("Not Authorized"))
         } 
         await messageModel.deleteOne({_id: id})

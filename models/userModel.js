@@ -35,12 +35,6 @@ const userSchema = mongoose.Schema({
         enum: ["male", "female"],
         default: "male",
     },
-    age: {
-        type: Number,
-        required: true,
-        min: [15],
-        max: [95]
-    },
     phone: {
         type: String,
         required: true,
