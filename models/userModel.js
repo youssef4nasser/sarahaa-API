@@ -1,13 +1,7 @@
 import mongoose from "mongoose";
 
 const userSchema = mongoose.Schema({
-    firstName: {
-        type: String,
-        required: true,
-        minLength: [3, "too short name"],
-        maxLength: [15, "too short name"]
-    },
-    lastName: {
+    name: {
         type: String,
         required: true,
     },
@@ -34,10 +28,6 @@ const userSchema = mongoose.Schema({
         type: String,
         enum: ["male", "female"],
         default: "male",
-    },
-    phone: {
-        type: String,
-        required: true,
     },
     profileImage: String,
     coverImages: [String]
