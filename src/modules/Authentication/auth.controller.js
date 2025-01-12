@@ -8,7 +8,7 @@ import { AppError } from "../../utils/appError.js";
 
 export const signUp = asyncHandler(
     async (req, res, next) => {
-        const { firstName, lastName, userName, email, password, gender, phone } = req.body;
+        const { name, userName, email, password, gender } = req.body;
         const chekUser = await userModel.findOne({ 
             $or: [
                 {userName},
@@ -21,7 +21,7 @@ export const signUp = asyncHandler(
         }
         const hashPassword = bcrypt.hashSync(password, parseInt(process.env.SALT_ROUED));
         const user = await userModel.create({ 
-            firstName, lastName, userName, email, password: hashPassword, gender, phone
+            name, userName, email, password: hashPassword, gender
         });
        
         const token = jwt.sign({id: user._id, email: user.email}, process.env.EMAIL_SIGNATURE, {expiresIn: 60 *  5})
