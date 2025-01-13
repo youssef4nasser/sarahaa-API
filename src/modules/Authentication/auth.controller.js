@@ -40,13 +40,30 @@ export const confirmEmail = asyncHandler(
     async (req, res, next)=>{
         const {token} = req.params;
         const decoded = jwt.verify(token, process.env.EMAIL_SIGNATURE)
-        const user = await userModel.findByIdAndUpdate(decoded.id, {confirmEmail: true})
-        return user ? res.redirect("https://sarahah-app.vercel.app/confirm-verified") : res.redirect("https://sarahah-app.vercel.app/confirm-failed")
+        // if token is expired redirect to register page
+        if(!decoded) return res.redirect("https://sarahah-app.vercel.app/confirm-failed")
+        // if user is not exist redirect to register page
+        const user = await userModel.findById(decoded.id);
+        if (!user)  return res.redirect("https://sarahah-app.vercel.app/register");
+        // if user is already confirm email redirect to login page
+        if(user.isConfirmed) return res.redirect("https://sarahah-app.vercel.app/confirm-verified")
+        // update user isConfirmed to true
+        await userModel.findByIdAndUpdate(decoded.id, {confirmEmail: true})
+        // redirect to confirm-verified page
+        return res.redirect("https://sarahah-app.vercel.app/confirm-verified")
     }
 )
 
 export const newConfirmEmail = asyncHandler(
     async (req, res, next)=>{
+        // const { email } = req.body;
+        // const user = await userModel.findOne({email})
+        // if(!user) return next(new AppError("Not register account", 404))
+        // if(user.confirmEmail) return next(new AppError("User is already confirm email", 409))
+
+        // await sendEmail({to:user.email, subject: "Confirm Email Saraha", html})
+        // return res.json({message: "success chek your Email"})
+
         const {token} = req.params;
         const decoded = jwt.verify(token, process.env.EMAIL_SIGNATURE)
         const user = await userModel.findById(decoded.id)
