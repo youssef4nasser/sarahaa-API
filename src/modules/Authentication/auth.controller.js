@@ -41,7 +41,7 @@ export const confirmEmail = asyncHandler(
         const {token} = req.params;
         const decoded = jwt.verify(token, process.env.EMAIL_SIGNATURE)
         const user = await userModel.findByIdAndUpdate(decoded.id, {confirmEmail: true})
-        return user ? res.redirect("https://sarahah-app.vercel.app/confirmEmail") : next(new AppError("Not register account", 404))
+        return user ? res.redirect("https://sarahah-app.vercel.app/confirm-verified") : res.redirect("https://sarahah-app.vercel.app/confirm-failed")
     }
 )
 
