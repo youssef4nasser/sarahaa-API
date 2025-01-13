@@ -31,7 +31,7 @@ export const signUp = asyncHandler(
         const RequestNewEmailLink = `${req.protocol}://${req.headers.host}/auth/newconfirmemail/${nweConfirmEmailToken}`
         const html = htmlCode(link, RequestNewEmailLink);
 
-        await sendEmail({to:email, subject: "Confirm Email Saraha", html})
+        await sendEmail({to:email, subject: "Confirm Your Account", html})
         return res.json({ message: "User created successfully", user })
     }
 )
@@ -41,7 +41,7 @@ export const confirmEmail = asyncHandler(
         const {token} = req.params;
         const decoded = jwt.verify(token, process.env.EMAIL_SIGNATURE)
         const user = await userModel.findByIdAndUpdate(decoded.id, {confirmEmail: true})
-        return user ? res.redirect("https://sarahah-app-delta.vercel.app/confirmEmail") : next(new AppError("Not register account", 404))
+        return user ? res.redirect("https://sarahah-app.vercel.app/confirmEmail") : next(new AppError("Not register account", 404))
     }
 )
 
