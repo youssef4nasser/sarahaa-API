@@ -28,7 +28,7 @@ export const signUp = asyncHandler(
         // confirm link
         const confirmLink = `${req.protocol}://${req.headers.host}/auth/confirmemail/${token}`
         // resend link
-        const resendLink = `${req.protocol}://${req.headers.host}/auth/resend-verification`
+        const resendLink = `https://sarahah-app.vercel.app/resend-verification`
         // html email code
         const template = htmlCode(confirmLink, resendLink);
         // send email
