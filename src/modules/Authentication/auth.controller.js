@@ -41,7 +41,7 @@ export const confirmEmail = asyncHandler(
     async (req, res, next)=>{
         const {token} = req.params;
         const decoded = jwt.verify(token, process.env.EMAIL_SIGNATURE)
-        // if token is expired redirect to register page
+        // if token is expired redirect to confirm-failed page
         if(!decoded) return res.redirect("https://sarahah-app.vercel.app/confirm-failed")
         // if user is not exist redirect to register page
         const user = await userModel.findById(decoded.id);
@@ -55,7 +55,7 @@ export const confirmEmail = asyncHandler(
     }
 )
 
-export const newConfirmEmail = asyncHandler(
+export const resendVerification = asyncHandler(
     async (req, res, next)=>{
         const { email } = req.body;
         const user = await userModel.findOne({email})
@@ -64,25 +64,14 @@ export const newConfirmEmail = asyncHandler(
 
         const token = jwt.sign({id: user._id, email: user.email}, process.env.EMAIL_SIGNATURE, {expiresIn: '15m'})
         // confirm link
-        const link = `${req.protocol}://${req.headers.host}/auth/confirmemail/${token}`
-        const template = htmlCode(link, "https://sarahah-app.vercel.app/resend-verification");
+        const confirmLink = `${req.protocol}://${req.headers.host}/auth/confirmemail/${token}`
+        // resend link
+        const resendLink = `https://sarahah-app.vercel.app/resend-verification`
+        // html email code
+        const template = htmlCode(confirmLink, resendLink);
+        // send email
         await sendEmail({to:email, subject: "Confirm Your Account (available 15m only)", template})
-        return res.json({message: "success check your Email"})
-
-        // const {token} = req.params;
-        // const decoded = jwt.verify(token, process.env.EMAIL_SIGNATURE)
-        // const user = await userModel.findById(decoded.id)
-        // if(!user){
-        //     return next(new AppError("User is ont exist", 409))
-        // }
-        // if(user.confirmEmail){
-        //     return next(new AppError("User is already confirm email", 409))
-        // }
-
-        // const newToken = jwt.sign({id: user._id, email: user.email}, process.env.EMAIL_SIGNATURE, {expiresIn:'15m'})
-        // const template = `<a href="${req.protocol}://${req.headers.host}/auth/confirmemail/${newToken}">Click Here To Confirm your Email</a>`
-        // await sendEmail({to:user.email, subject: "Confirm Email Saraha", template})
-        // return res.json({message: "success chek your Email"})
+        return res.json({message: "Success check your email"})
     }
 )
 
