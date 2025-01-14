@@ -26,11 +26,14 @@ export const signUp = asyncHandler(
        
         const token = jwt.sign({id: user._id, email: user.email}, process.env.EMAIL_SIGNATURE, {expiresIn: '15m'})
         // confirm link
-        const link = `${req.protocol}://${req.headers.host}/auth/confirmemail/${token}`
-        const template = htmlCode(link, "https://sarahah-app.vercel.app/resend-verification");
-
+        const confirmLink = `${req.protocol}://${req.headers.host}/auth/confirmemail/${token}`
+        // resend link
+        const resendLink = `${req.protocol}://${req.headers.host}/auth/resend-verification`
+        // html email code
+        const template = htmlCode(confirmLink, resendLink);
+        // send email
         await sendEmail({to:email, subject: "Confirm Your Account (available 15m only)", template})
-        return res.json({ message: "User created successfully", user })
+        return res.json({ message: "Account created successfully"})
     }
 )
 
