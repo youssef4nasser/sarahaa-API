@@ -21,6 +21,15 @@ export const loginSchema = Joi.object({
     'required': 'Please enter your userName or email',
 });
 
+// validation for email resendVerification
+export const resendVerificationSchema = Joi.object({
+    email: Joi.string().email({
+        tlds: {
+            allow: ["com", "net", "org", "eg", "me", "co", "io"],
+         },
+    }).required()
+})
+
 // validation token from params
 export const tokenSchema = Joi.object({
     token: Joi.string().trim().required().pattern(/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/)
