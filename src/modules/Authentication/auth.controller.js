@@ -91,7 +91,7 @@ export const logIn = asyncHandler(
         if (!match) {
             return next(new AppError("Password incorrect", 401))
         }
-        let token = jwt.sign({id: user._id, firstName: user.firstName, lastName: user.lastName, userName: user.userName}, process.env.TOKEN_SIGNATURE)
-        return res.status(200).json({ message: "success", token, user})
+        let token = jwt.sign({id: user._id, name: user.name, userName: user.userName}, process.env.TOKEN_SIGNATURE)
+        return res.status(200).json({ message: "success", token})
     }
 )
