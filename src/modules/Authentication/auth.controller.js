@@ -95,3 +95,20 @@ export const logIn = asyncHandler(
         return res.status(200).json({ message: "success", token})
     }
 )
+
+// forgot password
+export const forgotPassword = asyncHandler(
+    async (req, res, next) => {
+        const { email } = req.body;
+        const user = await userModel.findOne({email})
+        if(!user) return next(new AppError("User is not exist", 404))
+        const token = jwt.sign({id: user._id, email: user.email}, process.env.EMAIL_SIGNATURE, {expiresIn: '15m'})
+    
+        const confirmLink = `https://sarahah-app.vercel.app/reset-password/${token}`
+        // html email code
+        const template = htmlCode(confirmLink);
+        // send email
+        await sendEmail({to:email, subject: "Confirm Your Account (available 15m only)", template})
+        return res.json({message: "Success check your email"})
+    }
+)

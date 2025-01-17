@@ -1,11 +1,16 @@
 import { userModel } from "../../../models/userModel.js"
 import { asyncHandler } from "../../utils/errorHanding.js";
 
-export const getUsers = asyncHandler(
+// get user profile
+export const getUserProfile = asyncHandler(
     async (req, res, next)=>{
-        return res.json({message: "successe", user: req.user});
+        const user = await userModel.findById(req.user.id)
+        return res.status(200).json({message:"success", user})
     }
 )
+
+// update user profile
+
 
 export const profileImage = asyncHandler(
     async (req, res, next) => {

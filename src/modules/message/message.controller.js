@@ -5,14 +5,12 @@ import { asyncHandler } from "../../utils/errorHanding.js";
 
 export const addMessage = asyncHandler(
     async (req, res, next) => {
-        const {userName} = req.params
+        const {userName} = req.params;
         const { message } = req.body;
         const user = await userModel.findOne({userName});
-        if (!user) {
-            return next(new AppError(`User not found`, 404));
-        }
+        if (!user) return next(new AppError(`Account not found`, 404));
         await messageModel.create({message, userName});
-        return res.status(201).json({message: "success"});
+        return res.status(201).json({message: "Message sent successfully"});
     }
 )
 
@@ -22,6 +20,9 @@ export const getUserMessage = asyncHandler(
         return res.status(201).json({message: "success", messages});
     }
 )
+
+// get sent messages
+
 
 export const deleteUserMessage = asyncHandler(
     async (req, res, next) => {
