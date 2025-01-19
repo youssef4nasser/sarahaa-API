@@ -103,10 +103,12 @@ export const forgotPassword = asyncHandler(
         const user = await userModel.findOne({email})
         if(!user) return next(new AppError("User is not exist", 404))
         const token = jwt.sign({id: user._id, email: user.email}, process.env.EMAIL_SIGNATURE, {expiresIn: '15m'})
-
+        // link to forgot password page
+        const resendLink = "https://sarahah-app.vercel.app/forgot-password"
+        // confirm link to reset password page
         const confirmLink = `https://sarahah-app.vercel.app/reset-password/${token}`
         // html email code
-        const template = htmlCode(confirmLink);
+        const template = htmlCode(confirmLink, resendLink);
         // send email
         await sendEmail({to:email, subject: "Confirm Your Account (available 15m only)", template})
         return res.json({message: "Success check your email"})

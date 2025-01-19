@@ -1,5 +1,5 @@
 
-export const htmlCode = (link, RequestNewVerification)=>{
+export const htmlCode = (confirmLink, resentLink)=>{
     return `
 <!DOCTYPE html>
 <html>
