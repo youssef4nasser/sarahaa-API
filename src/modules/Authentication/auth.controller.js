@@ -103,12 +103,27 @@ export const forgotPassword = asyncHandler(
         const user = await userModel.findOne({email})
         if(!user) return next(new AppError("User is not exist", 404))
         const token = jwt.sign({id: user._id, email: user.email}, process.env.EMAIL_SIGNATURE, {expiresIn: '15m'})
-    
+
         const confirmLink = `https://sarahah-app.vercel.app/reset-password/${token}`
         // html email code
         const template = htmlCode(confirmLink);
         // send email
         await sendEmail({to:email, subject: "Confirm Your Account (available 15m only)", template})
         return res.json({message: "Success check your email"})
+    }
+)
+
+// reset password
+export const resetPassword = asyncHandler(
+    async (req, res, next) => {
+        const {token} = req.params;
+        const {password} = req.body;
+        const decoded = jwt.verify(token, process.env.EMAIL_SIGNATURE)
+        if(!decoded) return next(new AppError("Token is expired", 401))
+        const user = await userModel.findById(decoded.id)
+        if(!user) return next(new AppError("User is not exist", 404))
+        const hashPassword = bcrypt.hashSync(password, parseInt(process.env.SALT_ROUED));
+        await userModel.findByIdAndUpdate(decoded.id, {password: hashPassword})
+        return res.json({message: "Password reset successfully"})
     }
 )
