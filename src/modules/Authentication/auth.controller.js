@@ -118,8 +118,7 @@ export const forgotPassword = asyncHandler(
 // reset password
 export const resetPassword = asyncHandler(
     async (req, res, next) => {
-        const {token} = req.params;
-        const {password} = req.body;
+        const {password, token} = req.body;
         const decoded = jwt.verify(token, process.env.EMAIL_SIGNATURE)
         if(!decoded) return next(new AppError("Token is expired", 401))
         const user = await userModel.findById(decoded.id)
