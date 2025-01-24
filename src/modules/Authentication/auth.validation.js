@@ -21,6 +21,22 @@ export const loginSchema = Joi.object({
     'required': 'Please enter your userName or email',
 });
 
+// Forgot password validation
+export const forgotPasswordSchema = Joi.object({
+    email: Joi.string().email({
+        tlds: {
+            allow: ["com", "net", "org", "eg", "me", "co", "io"],
+         },
+    }).required()
+})
+
+// Reset password validation
+export const resetPasswordSchema = Joi.object({
+    password: Joi.string().pattern(new RegExp(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/)).required(),
+    confirmPassword: Joi.ref('password'),
+    token: tokenSchema.required()
+})
+
 // validation for email resendVerification
 export const resendVerificationSchema = Joi.object({
     email: Joi.string().email({
